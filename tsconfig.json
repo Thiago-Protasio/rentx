@@ -3,7 +3,15 @@
         "target": "es5",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "strictPropertyInitialization": false,
         "strict": true,
+        "types": [
+            "node",
+        ],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/@types"
+        ],
         "module": "commonjs",
         "baseUrl": "./src",
         "paths": {

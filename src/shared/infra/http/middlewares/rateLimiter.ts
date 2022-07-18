@@ -14,7 +14,7 @@ export default async function rateLimiter(
         legacyMode: true,
         socket: {
             host: process.env.REDIS_HOST,
-            port: Number(process.env.REDIS_PORT),
+            port: 6379,
         },
     });
 

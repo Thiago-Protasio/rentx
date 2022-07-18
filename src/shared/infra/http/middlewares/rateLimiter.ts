@@ -12,7 +12,7 @@ export default async function rateLimiter(
     const redisClient = redis.createClient({
         legacyMode: true,
         socket: {
-            host: "localhost",
+            host: "redis",
             port: 6379,
         },
     });

@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { NextFunction, Request, Response } from "express";
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import * as redis from "redis";
@@ -14,7 +13,7 @@ export default async function rateLimiter(
         legacyMode: true,
         socket: {
             host: process.env.REDIS_HOST,
-            port: 6379,
+            port: Number(process.env.REDIS_PORT),
         },
     });
 

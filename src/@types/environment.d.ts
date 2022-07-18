@@ -25,6 +25,12 @@ declare global {
             REDIS_PORT: number;
 
             SENTRY_DSN: string;
+
+            SECRET_TOKEN: string;
+            EXPIRES_IN_TOKEN: string;
+            SECRET_REFRESH_TOKEN: string;
+            EXPIRES_IN_REFRESH_TOKEN: string;
+            EXPIRES_DAYS_REFRESH_TOKEN: number;
         }
     }
 }

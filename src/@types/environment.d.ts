@@ -17,6 +17,7 @@ declare global {
             AWS_REGION: string;
 
             MAIL_PROVIDER: string;
+            SES_EMAIL: string;
 
             disk: string;
 

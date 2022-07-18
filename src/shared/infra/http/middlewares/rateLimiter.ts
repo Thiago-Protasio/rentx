@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { NextFunction, Request, Response } from "express";
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import * as redis from "redis";

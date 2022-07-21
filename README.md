@@ -1,81 +1,219 @@
-# Cadastro de carro
 
-**RF**
-Deve ser possível cadastrar um carro.
+# Rentx - Aluguel de carros
 
-**RN**
-Não deve ser possível cadastrar um carro com uma placa já existente.
-O carro deve ser cadastrado com disponibilidade por padrão.
-* O usuário responsável pelo cadastro deve ser um usuário administrador.
-
-# Listagem de carros
-
-**RF**
-Deve ser possível listar todos os carros disponíveis.
-Deve ser possível listar todos os carros disponíveis pelo nome da categoria
-Deve ser possível listar todos os carros disponíveis pelo nome da marca
-Deve ser possível listar todos os carros disponíveis pelo nome do carro
-
-**RN**
-O usuário não precisa estar logado no sistema.
-
-# Cadastro de Especificação no carro
-
-**RF**
-Deve ser possível cadstrar uma especificação para um carro.
-Deve ser possível listar todas as especificações.
+Essa é um API completa de aluguel de carros. Criado em NodeJs, TypeScript e express. No Banco de Dados é usado Postegres junto com TypeORM. Além disso utiliza jest para testes automatizados e jwt token e refresh-token para autenticação.
 
 
-**RN**
-Não deve ser possível cadastrar uma especificação para um carro não cadastrado.
-Não deve ser possível cadastrar uma especificação já existente para o mesmo carro.
-O usuário responsável pelo cadastro deve ser um usuário administrador.
+## Casos de Uso
 
-# Cadastro de imagens do carro
+- [Contas e usuários](#contas-e-usuários)
+    - [Cadastro de usuário](#cadastro-de-usuário)
+    - [Autenticação de usuário](#autenticação-de-usuário)
+- [Carros](#carros)
+    - [Cadastrar carro](#cadastrar-carro)
+    - [Listar carros](#listar-carros)
+    - [Upload de imagem](#upload-de-imagem)
+- [Aluguéis](#aluguéis)
+    - [Criar aluguel](#criar-aluguel)
+    - [Devolução e cobrança](#devolução-e-cobrança)
 
-**RF**
-Deve ser possível cadastrar a imagem do carro.
+## Contas e usuários
+### Cadastro de usuário
 
-**RNF**
-Utilizar o multer para upload dos arquivos.
+```https
+  POST /users/
+```
+Para cadastrar um usuário a aplicação deve receber no **corpo** da requisição as seguintes propriedades:
 
-**RN**
-O usuário deve poder cadastrar mais de uma imagem para o mesmo carro.
-O usuário responsável pelo cadastro deve ser um usuário administrador.
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `name` | `string` | Nome do usuário |
+| `username` | `string` | Nome de identificação |
+| `email` | `string` | E-mail do usuário |
+| `password` | `string` | Senha  de acesso |
+| `driver_license` | `string` | Número da carteira de habilitação |
 
-# Aluguel de carros
+#### Retorno
 
-**RF**
-Deve ser possível cadastrar um aluguel.
+Caso a criação seja bem sucedida o usuário irá receber um `response` com status `201`
 
-**RN**
-Apenas um usuário cadastrado e logado deve conseguir cadastrar um aluguel.
-O aluguel deve ter duração miníma de 24 horas.
-Não deve ser possível cadastrar um novo aluguel caso já exista um aberto para o mesmo usuário.
-Não deve ser possível cadastrar um novo aluguel caso já exista um aberto para o mesmo carro.
-Ao realizar o aluguel, o status do carro deverá ser alterado para indisponivel.
+### Autenticação de usuário
 
-# Devolução de carro
+A aplicação usa um token de acesso com duração de 15m e um refresh-token com duração de 30d que é usado para criar novos tokens de acesso.  
+Quando um usuário faz login são gerados tanto o token de acesso quanto o refresh-token.
 
-**RF**
-Deve ser possível realizar a devolução de um carro
+```https
+    POST /sessions
+```
 
-**RN**
-Se o carro for devolvido com menos de 24 horas, deverá ser cobrado a diária completa.
-Ao realizar a devolução, o carro deverá ser liberado para outro aluguel.
-Ao realizar a devolução, o usuário deverá ser liberado para outro aluguel.
-Ao realizar a devolução, deverá ser calculado o total do aluguel.
-Caso o horário seja superior ao horário previsto de entrega, deverá ser cobrado multa proporcional aos dias de atraso.
-Caso haja multa, deverá ser somado ao total do aluguel.
-O usuário deve estar logado.
+Para que seja possível fazer login a aplicação deve receber no **corpo** da requisição as seguintes propriedades:
 
-# Listagem de aluguéis para usuário
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `email` | `string` | E-mail do usuário |
+| `password` | `string` | Senha do usuário |
 
-**RF**
-Deve ser possível realizar a busca de todos os aluguéis para o usuário
+#### Retorno
 
-**RN**
-O usuário deve estar logado na aplicação
+Se o login for bem-sucedido o retorno será: `200`
+
+```json
+{
+	"token": "(token de acesso)",
+	"user": {
+		"name": "Nome do usuário",
+		"email": "Email do usuário"
+	},
+	"refresh_token": "(refresh-token)"
+}
+```
+
+## Carros
+### Cadastrar carro 
+
+**RN:**  
+- Não é possível cadastrar um carro com uma placa já existente.  
+- O carro é terá o status 'disponivel' ao ser criado.
+- O usuário responsável pelo cadastro deve ser um administrador.
+
+```https
+    POST /cars
+```
+
+Para cadastrar um carro a aplicação deve receber um token de um usuário administrador
+e deve receber as seguintes propriedades no corpo da requisição:
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `name` | `string` | Modelo do carro |
+| `description` | `string` | Descrição do carro |
+| `brand` | `string` | Marca do carro |
+| `category_id` | `string` | Id da categoria que o carro pertence |
+| `license_plate` | `string` | Placa do carro |
+| `fine_amount` | `number` | Multa de atraso de devolução |
+| `daily_rate` | `number` | Custo de aluguel diário |
+
+#### Retorno
+
+Caso a criação seja bem sucedida o retorno será: `201`
+
+```json
+{
+	"id": "(id do carro gerado)",
+	"available": true,
+	"name": "Nome do carro",
+	"description": "Descrição do carro",
+	"daily_rate": 0,
+	"license_plate": "ABC-1234",
+	"fine_amount": 0,
+	"brand": "Marca do carro",
+	"category_id": "(id da categoria)",
+	"created_at": "(data de criação)"
+}
+```
+
+### Listar carros
+
+Lista os carros disponiveis para aluguel. O usuário não precisa estar autenticado no sistema.
+
+```https
+    GET /cars/available
+```
+
+#### Retorno
+
+O retorno deverá ser um `array` de objetos contendo as informações dos carros disponíveis.
+
+
+### Upload de imagem
+
+Para fazer o upload de uma imagem de um carro o usuário deve estar autenticado e ser um administrador  
+Além disso, o id do carro deve ser recebido na **rota** (path) da requisição.
+
+```https
+    POST /cars/images/{car_id}
+```
+
+A imagem deve ser recebida no corpo da requisição como um **Multipart Form.**
+
+#### Retorno
+
+Caso o upload seja bem secedida o retorno será: `201`
+
+## Aluguéis
+
+### Criar aluguel
+
+**RN:**
+- Apenas um usuário autenticado pode alugar um carro.
+- O aluguel deve ter duração mínima de 24 horas.
+- Um usuário pode ter apenas 1 aluguel em aberto.
+- Não é possivel alugar um carro que já está alugado.
+
+```https
+    POST /rentals
+```
+
+Para cadastrar um aluguel o usuário deve estar autenticado e a aplicação deve receber as seguintes propriedades no **corpo** da requisição: 
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `expected_return_date` | `string` | Data de devolução |
+| `car_id` | `string` | Id do carro que será alugado |
+
+#### Retorno
+
+Caso o alguel seja criado com sucesso o retorno será: `201`
+
+```json
+{
+	"id": "(id gerado do aluguel)",
+	"car_id": "(id do carro)",
+	"user_id": "(id do usuário)",
+	"expected_return_date": "(data de devolução)",
+	"created_at": "(data de criação)",
+	"updated_at": "(data de atualização)"
+}
+```
+
+### Devolução e cobrança
+
+**RN:**
+
+- Se o carro for devolvido em menos de 24h será cobrado a diária completa.
+- Caso a data de entrega seja superior a data prevista de entrega será cobrado uma multa proporcional ao atraso.
+- Caso haja multa, ela será somada ao total do aluguel.
+- O usuário precisa estar autenticado para fazer uma devolução.
+
+Para que uma devolução seja feita, o id do aluguel deve ser passado na **rota** (path) da requisição.
+Além disso o usuário precisa estar autenticado.
+
+```https
+    POST /rentals/devolution/{rental_id}
+```
+
+#### Retorno
+
+Caso a devolução seja feita com sucesso, o retorno deverá ser: `200`
+
+```json
+{
+	"id": "(id do aluguel)",
+	"car_id": "(id do carro)",
+	"user_id": "(id do usuário)",
+	"start_date": "(inicio do aluguel)",
+	"end_date": "(fim do aluguel)",
+	"expected_return_date": "(data de devolução esperada)",
+	"total": 0,
+	"created_at": "(data de criação)",
+	"updated_at": "(data de atualização)"
+}
+```
+## Stack utilizada
+
+**Back-end:** Node, Express, jwt, TypeScript, TypeORM, Postgres, Docker, jest
+
+
 
 # Recuperação de senha
 

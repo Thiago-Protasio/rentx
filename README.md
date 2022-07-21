@@ -9,6 +9,7 @@ Essa é um API completa de aluguel de carros. Criado em NodeJs, TypeScript e exp
 - [Contas e usuários](#contas-e-usuários)
     - [Cadastro de usuário](#cadastro-de-usuário)
     - [Autenticação de usuário](#autenticação-de-usuário)
+    - [Recuperação de senha](#recuperação-de-senha)
 - [Carros](#carros)
     - [Cadastrar carro](#cadastrar-carro)
     - [Listar carros](#listar-carros)
@@ -67,6 +68,19 @@ Se o login for bem-sucedido o retorno será: `200`
 	"refresh_token": "(refresh-token)"
 }
 ```
+
+### Recuperação de Senha
+
+**RN:**
+
+- O usuário deve informar seu email no corpo da requisição.
+
+```https
+    POST /password/forgot
+```
+
+- O usuário receberá um e-mail com um link para informar uma nova senha.
+- O link de recuperação de senha expira em 3 horas
 
 ## Carros
 ### Cadastrar carro 

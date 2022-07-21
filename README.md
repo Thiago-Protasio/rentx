@@ -227,15 +227,3 @@ Caso a devolução seja feita com sucesso, o retorno deverá ser: `200`
 
 **Back-end:** Node, Express, jwt, TypeScript, TypeORM, Postgres, Docker, jest
 
-
-
-# Recuperação de senha
-
-**RF**
-Deve ser possível o usuário recuperar a senha informando o e-mail
-O usuário deve receber um e-mail com o passo a passo para a recuperação de senha
-O usuário deve conseguir inserir uma nova senha
-
-**RN**
-O usuário preceisa informar uma nova senha
-O link enviado para a recuperação precisa expirar em 3 horas

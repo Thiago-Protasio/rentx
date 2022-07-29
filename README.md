@@ -1,7 +1,7 @@
 
 # Rentx - Aluguel de carros
 
-Essa é um API completa de aluguel de carros. Criado em NodeJs, TypeScript e express. No Banco de Dados é usado Postegres junto com TypeORM. Além disso utiliza jest para testes automatizados e jwt token e refresh-token para autenticação.
+Essa é uma API completa de aluguel de carros. Criado em NodeJs, TypeScript e express. No Banco de Dados é usado Postegres junto com TypeORM. Além disso utiliza jest para testes automatizados e jwt token e refresh-token para autenticação.
 
 
 ## Casos de Uso
